@@ -7,21 +7,19 @@ artist_table_drop = "DROP TABLE IF EXISTS artists"
 time_table_drop = "DROP TABLE IF EXISTS times"
 
 # CREATE TABLES
-# The precision is the total number of digits, while the scale is the number of digits in the fraction part.
 songplay_table_create = ("""
 CREATE TABLE IF NOT EXISTS 
 songplays
 (
     songplay_id SERIAL PRIMARY KEY, 
-    -- start_time TIMESTAMP,
     start_time TIMESTAMP REFERENCES times(start_time), 
     user_id INT REFERENCES users(user_id), 
-    level VARCHAR, 
+    level VARCHAR NOT NULL, 
     song_id VARCHAR REFERENCES songs(song_id), 
     artist_id VARCHAR REFERENCES artists(artist_id), 
-    session_id INT, 
-    location VARCHAR, 
-    user_agent VARCHAR
+    session_id INT NOT NULL, 
+    location VARCHAR NOT NULL, 
+    user_agent VARCHAR NOT NULL
 )
 """)
 
@@ -30,10 +28,10 @@ CREATE TABLE IF NOT EXISTS
 users
 (
     user_id INT PRIMARY KEY, 
-    first_name VARCHAR, 
-    last_name VARCHAR, 
-    gender VARCHAR, 
-    level VARCHAR
+    first_name VARCHAR NOT NULL, 
+    last_name VARCHAR NOT NULL, 
+    gender VARCHAR NOT NULL, 
+    level VARCHAR NOT NULL
 )
 """)
 
@@ -42,10 +40,10 @@ CREATE TABLE IF NOT EXISTS
 songs
 (
     song_id VARCHAR PRIMARY KEY, 
-    title VARCHAR, 
-    artist_id VARCHAR, 
-    year INT, 
-    duration NUMERIC(9,5)
+    title VARCHAR NOT NULL, 
+    artist_id VARCHAR NOT NULL, 
+    year INT NOT NULL, 
+    duration NUMERIC(9,5) NOT NULL CHECK(duration >= 0)
 )
 """)
 
@@ -54,10 +52,10 @@ CREATE TABLE IF NOT EXISTS
 artists
 (
     artist_id VARCHAR PRIMARY KEY, 
-    name VARCHAR, 
-    location VARCHAR, 
-    latitude NUMERIC(9,5), 
-    longitude NUMERIC(9,5)
+    name VARCHAR NOT NULL, 
+    location VARCHAR NOT NULL, 
+    latitude NUMERIC(9,5) NOT NULL CHECK(latitude >= 0 AND latitude <= 90), 
+    longitude NUMERIC(9,5) NOT NULL CHECK(longitude >= -180 AND longitude <= 180)
 )
 """)
 
@@ -66,13 +64,12 @@ CREATE TABLE IF NOT EXISTS
 times
 (
     start_time TIMESTAMP PRIMARY KEY, 
-    -- start_time TIMESTAMP,
-    hour INT NOT NULL, 
-    day INT NOT NULL, 
-    week VARCHAR NOT NULL, 
-    month VARCHAR NOT NULL, 
+    hour INT NOT NULL CHECK(hour >= 0), 
+    day INT NOT NULL CHECK(day >= 0), 
+    week INT NOT NULL CHECK(week >= 0), 
+    month INT NOT NULL CHECK(month >= 0), 
     year INT NOT NULL, 
-    weekday VARCHAR NOT NULL
+    weekday INT NOT NULL CHECK(weekday >= 0)
 )
 """)
 
@@ -90,6 +87,9 @@ songplays
 VALUES 
 (%s, %s, %s, %s, %s, %s, %s, %s)
 ON CONFLICT DO NOTHING
+-- (user_id)
+-- DO UPDATE
+-- SET level=EXCLUDED.level, location=EXCLUDED.location, user_agent=EXCLUDED.user_agent
 """)
 
 user_table_insert = ("""
@@ -98,7 +98,9 @@ users
 (user_id, first_name, last_name, gender, level)
 VALUES
 (%s, %s, %s, %s, %s)
-ON CONFLICT DO NOTHING
+ON CONFLICT (user_id)
+DO UPDATE
+SET level=EXCLUDED.level, first_name=EXCLUDED.first_name, last_name=EXCLUDED.last_name, gender=EXCLUDED.gender
 """)
 
 song_table_insert = ("""
@@ -107,7 +109,9 @@ songs
 (song_id, title, artist_id, year, duration)
 VALUES
 (%s, %s, %s, %s, %s)
-ON CONFLICT DO NOTHING
+ON CONFLICT (song_id)
+DO UPDATE
+SET title=EXCLUDED.title, artist_id=EXCLUDED.artist_id, year=EXCLUDED.year, duration=EXCLUDED.duration
 """)
 
 artist_table_insert = ("""
@@ -116,7 +120,9 @@ artists
 (artist_id, name, location, latitude, longitude)
 VALUES
 (%s, %s, %s, %s, %s)
-ON CONFLICT DO NOTHING
+ON CONFLICT (artist_id)
+DO UPDATE
+SET name=EXCLUDED.name, location=EXCLUDED.location, latitude=EXCLUDED.latitude, longitude=EXCLUDED.longitude
 """)
 
 
@@ -130,19 +136,6 @@ ON CONFLICT DO NOTHING
 """)
 
 # FIND SONGS
-# TODO: check duration decimal places, since match may not be exact
-# song_select = ("""
-# SELECT 
-#     songs.song_id, artists.artist_id
-# FROM 
-#     songs, artists
-# WHERE (
-#     songs.title=%s
-#     AND artists.name=%s
-#     AND songs.duration=%s
-# )
-# """)
-
 song_select = ("""
 SELECT 
     songs.song_id, artists.artist_id 

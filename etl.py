@@ -17,11 +17,17 @@ def process_song_file(cur, filepath):
 
     # insert song record
     song_data = df[['song_id', 'title', 'artist_id', 'year', 'duration']].values.tolist()[0]
-    cur.execute(song_table_insert, song_data)
+    try:
+        cur.execute(song_table_insert, song_data)
+    except:
+        pass
     
     # insert artist record
     artist_data = df[['artist_id', 'artist_name', 'artist_location', 'artist_latitude', 'artist_longitude']].values.tolist()[0]
-    cur.execute(artist_table_insert, artist_data)
+    try:
+        cur.execute(artist_table_insert, artist_data)
+    except:
+        pass
 
 
 def process_log_file(cur, filepath):
@@ -46,20 +52,29 @@ def process_log_file(cur, filepath):
     time_df = pd.concat(time_data, axis=1, keys=column_labels)
 
     for i, row in time_df.iterrows():
-        cur.execute(time_table_insert, list(row))
+        try:
+            cur.execute(time_table_insert, list(row))
+        except:
+            pass
 
     # load user table
     user_df = df[['userId', 'firstName', 'lastName', 'gender', 'level']]
 
     # insert user records
     for i, row in user_df.iterrows():
-        cur.execute(user_table_insert, row)
+        try:
+            cur.execute(user_table_insert, row)
+        except:
+            pass
 
     # insert songplay records
     for index, row in df.iterrows():
         
         # get songid and artistid from song and artist tables
-        cur.execute(song_select, (row.song, row.artist, row.length))
+        try:
+            cur.execute(song_select, (row.song, row.artist, row.length))
+        except:
+            pass
         results = cur.fetchone()
         
         if results:
@@ -69,7 +84,10 @@ def process_log_file(cur, filepath):
 
         # insert songplay record
         songplay_data = (pd.to_datetime(row.ts, unit = 'ms'), row.userId, row.level, songid, artistid, row.sessionId, row.location, row.userAgent)
-        cur.execute(songplay_table_insert, songplay_data)
+        try:
+            cur.execute(songplay_table_insert, songplay_data)
+        except:
+            pass
 
 
 def process_data(cur, conn, filepath, func):
