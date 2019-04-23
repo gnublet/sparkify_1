@@ -15,17 +15,22 @@ The dataset contains song json files and log json files. The song files are a su
 To ensure data integrity, we placed some constraints on the postgres tables. These tables have ON CONFLICT conditions to update things like paid level (in cases where users transition from free to paid levels) and location. We used the pandas library for data processing to load the json files into dataframes. We filter and transform the dataframes and load into the tables using the psycopg2 library.
 
 ## Screenshots of tables
-Star Schema
+### Star Schema
 ![Image of Database Schema](https://github.com/gnublet/sparkify_1/blob/master/images/database_schema.png)
-Artists
+
+### Artists
 ![Image of Artists Table](https://github.com/gnublet/sparkify_1/blob/master/images/artists.png)
-Songplays
+
+### Songplays
 ![Image of songplays Table](https://github.com/gnublet/sparkify_1/blob/master/images/songplays.png)
-Songs
+
+### Songs
 ![Image of songs Table](https://github.com/gnublet/sparkify_1/blob/master/images/songs.png)
-Users
+
+### Users
 ![Image of users Table](https://github.com/gnublet/sparkify_1/blob/master/images/users.png)
-Times
+
+### Times
 ![Image of times Table](https://github.com/gnublet/sparkify_1/blob/master/images/times.png)
 
 1. The purpose of this database is to store data in a star schema. We have the songplays fact table with several dimension tables: songs, users, artists, and times. Each dimension table has a primary key that corresponds to a foreign key in the songplays fact table.
