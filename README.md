@@ -16,17 +16,17 @@ To ensure data integrity, we placed some constraints on the postgres tables. The
 
 ## Screenshots of tables
 Star Schema
-![Image of Database Schema](https://github.com/gnublet/sparkify_1/images/database_schema.png)
+![Image of Database Schema](https://github.com/gnublet/sparkify_1/blob/master/images/database_schema.png)
 Artists
-![Image of Artists Table](https://github.com/gnublet/sparkify_1/images/artists.png)
+![Image of Artists Table](https://github.com/gnublet/sparkify_1/blob/master/images/artists.png)
 Songplays
-![Image of songplays Table](https://github.com/gnublet/sparkify_1/images/songplays.png)
+![Image of songplays Table](https://github.com/gnublet/sparkify_1/blob/master/images/songplays.png)
 Songs
-![Image of songs Table](https://github.com/gnublet/sparkify_1/images/songs.png)
+![Image of songs Table](https://github.com/gnublet/sparkify_1/blob/master/images/songs.png)
 Users
-![Image of users Table](https://github.com/gnublet/sparkify_1/images/users.png)
+![Image of users Table](https://github.com/gnublet/sparkify_1/blob/master/images/users.png)
 Times
-![Image of times Table](https://github.com/gnublet/sparkify_1/images/times.png)
+![Image of times Table](https://github.com/gnublet/sparkify_1/blob/master/images/times.png)
 
 1. The purpose of this database is to store data in a star schema. We have the songplays fact table with several dimension tables: songs, users, artists, and times. Each dimension table has a primary key that corresponds to a foreign key in the songplays fact table.
 
